@@ -1,5 +1,15 @@
 import re
+import os
 from os import environ
+from pyrogram import enums
+from Script import script
+
+import asyncio
+import json
+from collections import defaultdict
+from typing import Dict, List, Union
+from pyrogram import Client
+from time import time
 
 id_pattern = re.compile(r'^.\d+$')
 def is_enabled(value, default):
@@ -9,6 +19,26 @@ def is_enabled(value, default):
         return False
     else:
         return default
+
+class evamaria(Client):
+    filterstore: Dict[str, Dict[str, str]] = defaultdict(dict)
+    warndatastore: Dict[
+        str, Dict[str, Union[str, int, List[str]]]
+    ] = defaultdict(dict)
+    warnsettingsstore: Dict[str, str] = defaultdict(dict)
+
+    def __init__(self):
+        name = self.__class__.__name__.lower()
+        super().__init__(
+            ":memory:",
+            plugins=dict(root=f"{name}/plugins"),
+            workdir=TMP_DOWNLOAD_DIRECTORY,
+            api_id=APP_ID,
+            api_hash=API_HASH,
+            bot_token=BOT_TOKEN,
+            parse_mode=enums.ParseMode.HTML,
+            sleep_threshold=60
+        )
 
 # Bot information
 SESSION = environ.get('SESSION', 'Media_search')
@@ -35,6 +65,7 @@ AUTH_GROUPS = [int(ch) for ch in auth_grp.split()] if auth_grp else None
 DATABASE_URI = environ.get('DATABASE_URI', "")
 DATABASE_NAME = environ.get('DATABASE_NAME', "LazyDeveloper")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
+MONGO_URL = os.environ.get('MONGO_URL', "")
 
 # Others
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
